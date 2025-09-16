@@ -55,11 +55,19 @@ function App() {
       .catch(error => console.error("Error deleting task:", error));
   };
 
+  // 6. Fungsi untuk menandai tugas sebagai selesai
+  const handleCompleteTask = (taskId) => {
+    const updatedTask = { ...taskId, is_completed: true };
+
+    axios.put(`${API_URL}/tasks/${taskId.id}`, updatedTask)
+      .then(() => fetchTasks())
+      .catch(error => console.error("Error completing task:", error));
+  };
+
   return (
     <div className="app-container">
       <div className="header">
         <h1>📝 Daftar Tugas</h1>
-        <p>Didukung oleh React & Laravel</p>
       </div>
 
       <form onSubmit={handleAddTask} className="add-task-form">
@@ -78,6 +86,9 @@ function App() {
             <span onClick={() => handleToggleTask(task)}>
               {task.title}
             </span>
+            <button onClick={() => handleCompleteTask(task)} className="complete-btn">
+              Selesai
+            </button>
             <button onClick={() => handleDeleteTask(task.id)} className="delete-btn">
               Hapus
             </button>
