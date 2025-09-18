@@ -1,15 +1,15 @@
-name: OWASP ZAP Scan
+name: OWASP-ZAP-Scan
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch: # bisa dijalankan manual dari tab Actions
+  workflow_dispatch:
 
 jobs:
   zap_scan:
     runs-on: ubuntu-latest
-    name: Run OWASP ZAP Baseline Scan
+    name: Run-OWASP-ZAP-Baseline-Scan
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -18,6 +18,7 @@ jobs:
         uses: zaproxy/action-baseline@v0.9.0
         with:
           target: "https://crud-manajemen-tugas-fullstack.vercel.app/"
+          cmd_options: "-J report_json.json -w report_md.md -r report_html.html"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -25,4 +26,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: zap-report
-          path: zap_report.html
+          path: |
+            report_html.html
+            report_md.md
+            report_json.json
