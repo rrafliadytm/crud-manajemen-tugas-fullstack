@@ -18,8 +18,6 @@ jobs:
         uses: zaproxy/action-baseline@v0.9.0
         with:
           target: "https://crud-manajemen-tugas-fullstack.vercel.app/"
-          rules_file_name: ".zap/rules.tsv" # opsional, untuk custom rules
-          cmd_options: "-a"  # aktifkan mode agresif (lebih banyak tes)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
