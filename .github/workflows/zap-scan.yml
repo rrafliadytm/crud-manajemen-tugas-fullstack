@@ -1,0 +1,30 @@
+name: OWASP ZAP Scan
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # bisa dijalankan manual dari tab Actions
+
+jobs:
+  zap_scan:
+    runs-on: ubuntu-latest
+    name: Run OWASP ZAP Baseline Scan
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.9.0
+        with:
+          target: "https://crud-manajemen-tugas-fullstack.vercel.app/"
+          rules_file_name: ".zap/rules.tsv" # opsional, untuk custom rules
+          cmd_options: "-a"  # aktifkan mode agresif (lebih banyak tes)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-report
+          path: zap_report.html
