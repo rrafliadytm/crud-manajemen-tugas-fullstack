@@ -18,6 +18,7 @@ jobs:
         uses: zaproxy/action-baseline@v0.9.0
         with:
           target: "https://crud-manajemen-tugas-fullstack.vercel.app/"
+          artifact_name: 'zap-scan-report' 
           cmd_options: "-J report_json.json -w report_md.md -r report_html.html"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
