@@ -1,32 +1,53 @@
-name: OWASP-ZAP-Scan
+# Nama workflow yang akan muncul di tab "Actions" GitHub
+name: OWASP ZAP Baseline Scan
 
+# Pemicu (trigger) untuk menjalankan workflow ini
 on:
+  # Jalankan saat ada push ke branch 'main' atau 'master'
   push:
-    branches:
-      - main
+    branches: [ main, master ]
+  
+  # Izinkan workflow ini dijalankan secara manual dari tab Actions
   workflow_dispatch:
 
+# Daftar pekerjaan (jobs) yang akan dijalankan
 jobs:
-  zapscan:  # Ubah nama job -> tanpa underscore
+  # Nama job, bisa apa saja, contoh: 'zap_scan'
+  zap_scan:
+    # Menggunakan runner Ubuntu versi terbaru yang disediakan GitHub
     runs-on: ubuntu-latest
-    name: Run-OWASP-ZAP-Baseline-Scan
+    
+    # Langkah-langkah yang akan dieksekusi dalam job ini
     steps:
-      - name: Checkout repository
+      # Langkah 1: Checkout kode repositori
+      # Diperlukan agar workflow bisa mengakses file di repositori
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run OWASP ZAP Baseline Scan
+      # Langkah 2: Jalankan ZAP Baseline Scan
+      # Action ini akan memindai target dan membuat file laporan.
+      # 'continue-on-error: true' penting agar workflow tidak berhenti jika
+      # fitur upload internal dari action ini gagal.
+      - name: ZAP Scan
         uses: zaproxy/action-baseline@v0.9.0
         with:
-          target: "https://crud-manajemen-tugas-fullstack.vercel.app/"
-          artifact_name: 'zap-scan-report' 
-          cmd_options: "-J report_json.json -w report_md.md -r report_html.html"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Ganti dengan URL aplikasi web Anda yang ingin dipindai
+          target: 'https://crud-manajemen-tugas-fullstack.vercel.app/'
+          
+          # Perintah tambahan untuk ZAP, termasuk menentukan nama file laporan
+          cmd_options: '-r report_html.html -w report_md.md -J report_json.json'
+        continue-on-error: true
 
-      - name: Upload ZAP Report
+      # Langkah 3: Unggah Laporan Hasil Scan sebagai Artefak
+      # Menggunakan action resmi dari GitHub untuk mengunggah file laporan
+      # yang dihasilkan oleh langkah sebelumnya.
+      - name: Upload ZAP Scan Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: zap-scan-report   # ubah nama artifact -> huruf kecil + tanda hubung
+          # Nama artefak yang akan muncul di halaman ringkasan workflow
+          name: zap-scan-report
+          
+          # Path ke file-file laporan yang ingin diunggah
           path: |
             report_html.html
             report_md.md
